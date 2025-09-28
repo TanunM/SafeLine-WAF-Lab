@@ -139,3 +139,79 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 -out /etc/ssl/dvwa/dvwa.crt \
 ```
 
+## Step 5: Installing and Configuring SafeLine WAF
+
+## 5.1 Install SafeLine WAF
+1. On the Ubuntu Server, run the automatic deployment script
+```bash
+bash -c "$(curl -fsSLk [https://waf.chaitin.com/release/latest/manager.sh](https://waf.chaitin.com/release/latest/manager.sh))" -- --en
+```
+2. After the installation port, username and password will be provided in the terminal.
+3. Log in to the management console by https://<Ubuntu IP>:9443
+
+### 5.2 Onboard DVWA Application
+1. Import Certificate by uploading the /etc/ssl/dvwa/dvwa.crt and /etc/ssl/dvwa/dvwa.key files to the WAF.
+2. Configure Application
+```
+DNS Name: dvwa.local
+WAF Listen Port: 443 (HTTPS).
+Backend URL (Reverse Proxy): http://127.0.0.1:8080 (or http://192.168.20.10:8080).
+Attach Certificate: Select the imported SSL certificate.
+```
+
+## Step 6: Simulating and Analyzing SQL Injection Attack
+1. Open Kali Linux and browse to the DVWA site.
+2. you will be redirected to https
+3. Log In to DVWA
+4. Set DVWA Security Level to low in the DVWA Security tab.
+5. Go to SQL Injection Section and try typical SQL injection strings
+```
+admin' OR '1'='1
+```
+6. you will see SafeLine WAF detected and blocked the malicious injection attempt.
+
+## Step 7: SafeLine WAF Advanced Configurations
+
+### 7.1 HTTP Flood Defense
+1. Enable HTTP Flood/DoS settings in SafeLine WAF.
+2. Configure Thresholds and Penalty or Ban duration.
+3. Test by sending multiple requests from Kali
+
+### 7.2 Authentication Sign-In
+1. Enable Auth Sign-In in the WAF policy for DVWA.
+2. Configure username/password or integrate with an external auth provider.
+3. Attempt to access DVWA from Kali.
+4. The WAF should prompt for credentials before passing traffic to the server.
+
+### 7.3 Custom Deny Rules
+1. Identify the IP of your Kali VM
+2. Add a Deny Rule in SafeLine WAF
+```
+Match Source IP: <Kali IP>
+Action: Block or Deny.
+```
+3. Test from Kali: You will receive a blocked response.
+
+## Troubleshooting
+**Apache Default Page Redirect:** After changing the Apache listening port and restarting, accessing DVWA using http://<Ubuntu IP>:8080/DVWA sometimes redirects to the generic Apache default page. This usually happens if the DVWA application is not explicitly defined in the virtual host configuration.
+
+To resolve it: 
+1. Check Virtual Host: Open the configuration file: sudo nano /etc/apache2/sites-available/000-default.conf
+2. Change Document Root: Ensure the file contains the following line, directing the server to the location of the DVWA folder: DocumentRoot /var/www/html
+3. Restart Apache: sudo systemctl restart apache2
+
+**WAF Not Intercepting:** If the WAF is not blocking attacks or HTTPS is not working.
+
+Resolution:
+Verify that Apache is running on the desired port and that the WAF's Backend URL is correctly pointing to this port
+
+**Kali Connectivity**  If Kali cannot reach the WAF/Ubuntu machine.
+
+Resolution:
+Confirm that both VMs are on the same network (Bridged) and can ping each other's static IPs. Verify that the /etc/hosts file on Kali correctly maps dvwa.local to the Ubuntu IP.
+
+## Key Lab Learnings
+* Attacker Skills: Understanding of basic SQL injection structure.
+* Defender Skills: WAF installation, SSL management, application onboarding, and policy configuration.
+* Forensic Analysis: Log analysis to identify attack source and method.
+
