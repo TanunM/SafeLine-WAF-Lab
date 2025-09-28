@@ -19,3 +19,34 @@ The objective of this lab is to:
 | **Security Tools** | SafeLine WAF, DVWA (Damn Vulnerable Web App) |
 | **Virtualization Software**| **VirtualBox** |
 
+## Step 1: Setting Up Virtual Machines
+
+### 1.1 Install Kali Linux
+1.  Download the **Kali Linux ISO** from the [Kali Official Website](https://www.kali.org/get-kali).
+2.  In VirtualBox, create a new VM. Allocate at least 2 GB RAM and 20 GB disk space.
+3.  Install Kali Linux using the ISO file.
+
+### 1.2 Install Ubuntu Server
+1.  Download the latest **Ubuntu Server LTS ISO** from the [Ubuntu download site](https://ubuntu.com/download/server).
+2.  Create a new VM in VirtualBox. Allocate at least 2 GB RAM and 20 GB disk space.
+3.  Install Ubuntu Server.
+
+### 1.3 Enable Bridged Networking
+To have the VMs appear on the same network:
+1. Open VirtualBox > select your VM  > Settings > Network.
+2. Adapter 1: Choose Bridged Adapter.
+4. Click OK.
+5. Do the same step for both the machine.
+
+## Step 2: Configuring Ubuntu Server
+
+### 2.1 Initial Setup and LAMP Installation
+Update the system and install packages, including Apache, PHP, and MySQL:
+```bash
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y net-tools
+sudo apt-get install -y openssl
+sudo apt install curl
+sudo apt-get install -y net-tools git openssl apache2 php php-mysql mysql-server
+```
