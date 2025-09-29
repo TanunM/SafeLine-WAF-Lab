@@ -244,3 +244,6 @@ Confirm that both VMs are on the same network (Bridged) and can ping each other'
 * Defender Skills: WAF installation, SSL management, application onboarding, and policy configuration.
 * Forensic Analysis: Log analysis to identify attack source and method.
 
+## Reference
+1. [SafeLine Web Application Firewall](https://www.youtube.com/watch?v=N0dEC1nuWCQ)
+2. [Install SafeLine WAF In Your Home Lab!](https://www.youtube.com/watch?v=XIRAo9OP_LA)
