@@ -85,7 +85,11 @@ GRANT ALL ON dvwa.* TO 'dvwa_user'@'localhost';
 FLUSH PRIVILEGES;
 exit;
 ```
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/sql%20database.png'/>
+
 5. Initialize DVWA by Navigate to http://<Ubuntu IP>/DVWA/setup.php
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/dvwa.png'/>
 
 ### 2.3 optional changes
 1. To change the DVWA Listening Port, edit the Apache Configuration file:
@@ -138,6 +142,7 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 -keyout /etc/ssl/dvwa/dvwa.key \
 -out /etc/ssl/dvwa/dvwa.crt \
 ```
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/ssl_crt.png'/>
 
 ## Step 5: Installing and Configuring SafeLine WAF
 
@@ -153,22 +158,32 @@ bash -c "$(curl -fsSLk [https://waf.chaitin.com/release/latest/manager.sh](https
 1. Import Certificate by uploading the /etc/ssl/dvwa/dvwa.crt and /etc/ssl/dvwa/dvwa.key files to the WAF.
 2. Configure Application
 ```
-DNS Name: dvwa.local
+DNS Name: <ubuntu IP>
 WAF Listen Port: 443 (HTTPS).
 Backend URL (Reverse Proxy): http://127.0.0.1:8080 (or http://192.168.20.10:8080).
 Attach Certificate: Select the imported SSL certificate.
 ```
 
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/Reverse_proxy.png'/>
+
 ## Step 6: Simulating and Analyzing SQL Injection Attack
 1. Open Kali Linux and browse to the DVWA site.
 2. you will be redirected to https
 3. Log In to DVWA
-4. Set DVWA Security Level to low in the DVWA Security tab.
-5. Go to SQL Injection Section and try typical SQL injection strings
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/dvwa_login.png'/>
+   
+5. Set DVWA Security Level to low in the DVWA Security tab.
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/dvwa_security.png'/>
+
+6. Go to SQL Injection Section and try typical SQL injection strings
 ```
 admin' OR '1'='1
 ```
-6. you will see SafeLine WAF detected and blocked the malicious injection attempt.
+7. you will see SafeLine WAF detected and blocked the malicious injection attempt.
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/sqlinjection_result.png'/>
 
 ## Step 7: SafeLine WAF Advanced Configurations
 
@@ -177,11 +192,19 @@ admin' OR '1'='1
 2. Configure Thresholds and Penalty or Ban duration.
 3. Test by sending multiple requests from Kali
 
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/Http_flood.png'/>
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/Http_flood_result.png'/>
+
 ### 7.2 Authentication Sign-In
 1. Enable Auth Sign-In in the WAF policy for DVWA.
 2. Configure username/password or integrate with an external auth provider.
 3. Attempt to access DVWA from Kali.
 4. The WAF should prompt for credentials before passing traffic to the server.
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/Auth_condition.png'/>
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/auth_result.png'/>
 
 ### 7.3 Custom Deny Rules
 1. Identify the IP of your Kali VM
@@ -191,6 +214,12 @@ Match Source IP: <Kali IP>
 Action: Block or Deny.
 ```
 3. Test from Kali: You will receive a blocked response.
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/ipblock_rule.png'/>
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/IPblock_log.png'/>
+
+<img src='https://github.com/TanunM/SafeLine-WAF-Lab/blob/main/gallery/ipblock_result.png'/>
 
 ## Troubleshooting
 **Apache Default Page Redirect:** After changing the Apache listening port and restarting, accessing DVWA using http://<Ubuntu IP>:8080/DVWA sometimes redirects to the generic Apache default page. This usually happens if the DVWA application is not explicitly defined in the virtual host configuration.
